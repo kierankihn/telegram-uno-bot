@@ -169,7 +169,7 @@ class Player(object):
             is_playable = False
         elif last.value == c.DRAW_FOUR and (card.value != c.DRAW_FOUR):
             is_playable = False
-        elif card.value != last.value and card.color != last.color and card.special == False:
+        elif card.value != last.value and card.color != last.color and not card.special:
             is_playable = False
     
 
