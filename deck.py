@@ -70,8 +70,11 @@ class Deck(object):
                 self.cards.append(Card(color, value))
                 if not value == c.ZERO:
                     self.cards.append(Card(color, value))
+                if value == c.DRAW_TWO or value == c.REVERSE or value == c.SKIP:
+                    for _ in range (0, 6):
+                        self.cards.append(Card(color, value))
         for special in c.SPECIALS:
-            for _ in range(4):
+            for _ in range(20):
                 self.cards.append(Card(None, None, special=special))
         self.shuffle()
 
