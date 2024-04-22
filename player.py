@@ -21,6 +21,7 @@
 import logging
 from datetime import datetime
 
+import game
 import card as c
 from errors import DeckEmptyError
 from config import WAITING_TIME
@@ -34,7 +35,7 @@ class Player(object):
     other players by placing itself behind the current player.
     """
 
-    def __init__(self, game, user):
+    def __init__(self, game: game.Game, user):
         self.cards = list()
         self.game = game
         self.user = user
@@ -157,30 +158,20 @@ class Player(object):
 
         return playable
 
-    def _card_playable(self, card):
+    def _card_playable(self, card: c.Card):
         """Check a single card if it can be played"""
 
         is_playable = True
-        last = self.game.last_card
+        last: c.Card = self.game.last_card
         self.logger.debug("Checking card " + str(card))
 
-        if (card.color != last.color and card.value != last.value and
-                not card.special):
-            self.logger.debug("Card's color or value doesn't match")
+        if last.value == c.DRAW_TWO and (card.value != c.DRAW_TWO and card.value != c.DRAW_FOUR):
             is_playable = False
-        elif last.value == c.DRAW_TWO and not \
-                card.value == c.DRAW_TWO and self.game.draw_counter:
-            self.logger.debug("Player has to draw and can't counter")
+        elif last.value == c.DRAW_FOUR and (card.value != c.DRAW_FOUR):
             is_playable = False
-        elif last.special == c.DRAW_FOUR and self.game.draw_counter:
-            self.logger.debug("Player has to draw and can't counter")
+        elif card.value != last.value and card.color != last.color and card.special == False:
             is_playable = False
-        elif (last.special == c.CHOOSE or last.special == c.DRAW_FOUR) and \
-                (card.special == c.CHOOSE or card.special == c.DRAW_FOUR):
-            self.logger.debug("Can't play colorchooser on another one")
-            is_playable = False
-        elif not last.color:
-            self.logger.debug("Last card has no color")
-            is_playable = False
+    
+
 
         return is_playable
