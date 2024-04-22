@@ -165,13 +165,15 @@ class Player(object):
         last: c.Card = self.game.last_card
         self.logger.debug("Checking card " + str(card))
 
-        if last.value == c.DRAW_TWO:
-            if card.value != c.DRAW_TWO and card.value != c.DRAW_FOUR:
+        if last.value == c.DRAW_TWO and self.game.draw_counter != 0:
+            if card.value != c.DRAW_TWO and card.special != c.DRAW_FOUR:
                 is_playable = False
-        elif last.value == c.DRAW_FOUR:
-            if card.value != c.DRAW_FOUR:
+        elif last.special == c.DRAW_FOUR and self.game.draw_counter != 0:
+            if card.special != c.DRAW_FOUR:
                 is_playable = False
-        elif card.value != last.value and card.color != last.color and not card.special:
-            is_playable = False
+        elif not card.special:
+            if card.value != last.value and card.color != last.color:
+                is_playable = False
+
     
         return is_playable
