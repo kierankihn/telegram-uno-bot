@@ -1,17 +1,15 @@
-FROM python:3.11-alpine
+FROM alpine:3.14
+
+WORKDIR /app
+
+ADD . .
 
 RUN apk add --no-cache gettext
 
-WORKDIR /app/
-COPY requirements.txt .
-RUN pip install -r requirements.txt
+RUN find /app/locales -maxdepth 2 -type d -name 'LC_MESSAGES' -exec sh -c 'msgfmt {}/unobot.po -o {}/unobot.mo' \;
 
-COPY . .
+RUN apk add --update --no-cache py3-pip binutils
 
-RUN cd locales && find . -maxdepth 2 -type d -name 'LC_MESSAGES' -exec ash -c 'msgfmt {}/unobot.po -o {}/unobot.mo' \;
+RUN pip3 install -r requirements.txt
 
-
-VOLUME /app/data
-ENV UNO_DB /app/data/uno.sqlite3
-
-ENTRYPOINT python3 ./bot.py
+CMD ["python3", "/app/bot.py"]
